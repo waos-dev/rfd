@@ -10,12 +10,17 @@ mod native;
 #[cfg(not(target_arch = "wasm32"))]
 pub use native::FileHandle;
 
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", not(target_os = "wasi")))]
 mod web;
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", not(target_os = "wasi")))]
 pub use web::FileHandle;
-#[cfg(target_arch = "wasm32")]
+#[cfg(all(target_arch = "wasm32", not(target_os = "wasi")))]
 pub(crate) use web::WasmFileHandleKind;
+
+#[cfg(target_os = "wasi")]
+mod waos;
+#[cfg(target_os = "wasi")]
+pub use waos::FileHandle;
 
 #[cfg(test)]
 mod tests {
@@ -27,7 +32,7 @@ mod tests {
         let _ = FileHandle::read;
         #[cfg(feature = "file-handle-inner")]
         let _ = FileHandle::inner;
-        #[cfg(not(target_arch = "wasm32"))]
+        #[cfg(any(not(target_arch = "wasm32"), target_os = "wasi"))]
         let _ = FileHandle::path;
     }
 }

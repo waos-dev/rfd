@@ -24,6 +24,8 @@ pub struct FileDialog {
     pub(crate) title: Option<String>,
     pub(crate) parent: Option<RawWindowHandle>,
     pub(crate) parent_display: Option<RawDisplayHandle>,
+    #[cfg(target_os = "wasi")]
+    pub(crate) parent_view: Option<std::sync::Arc<wasdk::views::View>>,
     pub(crate) can_create_directories: Option<bool>,
 }
 
@@ -34,7 +36,7 @@ unsafe impl Sync for FileDialog {}
 
 impl FileDialog {
     /// New file dialog builder
-    #[cfg(not(target_arch = "wasm32"))]
+    #[cfg(any(not(target_arch = "wasm32"), target_os = "wasi"))]
     pub fn new() -> Self {
         Default::default()
     }
@@ -99,6 +101,14 @@ impl FileDialog {
     ) -> Self {
         self.parent = parent.window_handle().ok().map(|x| x.as_raw());
         self.parent_display = parent.display_handle().ok().map(|x| x.as_raw());
+        #[cfg(target_os = "wasi")]
+        {
+            self.parent_view = parent
+                .window_handle()
+                .ok()
+                .and_then(wasdk::view_of_window_handle)
+                .map(std::sync::Arc::new);
+        }
         self
     }
 
@@ -110,13 +120,13 @@ impl FileDialog {
     }
 }
 
-#[cfg(not(target_arch = "wasm32"))]
+#[cfg(any(not(target_arch = "wasm32"), target_os = "wasi"))]
 use crate::backend::{FilePickerDialogImpl, FileSaveDialogImpl, FolderPickerDialogImpl};
 
 #[cfg(target_os = "macos")]
 use crate::backend::FileOrFolderPickerDialogImpl;
 
-#[cfg(not(target_arch = "wasm32"))]
+#[cfg(any(not(target_arch = "wasm32"), target_os = "wasi"))]
 impl FileDialog {
     /// Pick one file
     pub fn pick_file(self) -> Option<PathBuf> {
@@ -258,7 +268,7 @@ impl AsyncFileDialog {
 use crate::backend::AsyncFileOrFolderPickerDialogImpl;
 use crate::backend::AsyncFilePickerDialogImpl;
 use crate::backend::AsyncFileSaveDialogImpl;
-#[cfg(not(target_arch = "wasm32"))]
+#[cfg(any(not(target_arch = "wasm32"), target_os = "wasi"))]
 use crate::backend::AsyncFolderPickerDialogImpl;
 
 use std::future::Future;
@@ -274,7 +284,7 @@ impl AsyncFileDialog {
         AsyncFilePickerDialogImpl::pick_files_async(self.file_dialog)
     }
 
-    #[cfg(not(target_arch = "wasm32"))]
+    #[cfg(any(not(target_arch = "wasm32"), target_os = "wasi"))]
     /// Pick one folder
     ///
     /// Does not exist in `WASM32`
@@ -282,7 +292,7 @@ impl AsyncFileDialog {
         AsyncFolderPickerDialogImpl::pick_folder_async(self.file_dialog)
     }
 
-    #[cfg(not(target_arch = "wasm32"))]
+    #[cfg(any(not(target_arch = "wasm32"), target_os = "wasi"))]
     /// Pick multiple folders
     ///
     /// Does not exist in `WASM32`
