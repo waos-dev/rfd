@@ -7,10 +7,9 @@ This fork adds WaOS to rfd 0.17.2: on a WaOS app (a WASI component, `target_os =
 ```toml
 [patch.crates-io]
 rfd = { git = "https://github.com/waos-dev/rfd", branch = "waos" }
-wasdk = { git = "https://github.com/waos-dev/waos", branch = "main" }
 ```
 
-The fork asks for `wasdk` 0.7.1 with its `raw-window-handle` feature, which is on WaOS's `main` branch and not published yet. Until the next `wasdk` release, an app also names `wasdk` from WaOS's repository in the same `[patch.crates-io]` so Cargo resolves it there; once that release is out, only the `rfd` line is needed.
+The fork asks for the published `wasdk` (0.8.0) with its `raw-window-handle` feature.
 
 ## What it does
 
