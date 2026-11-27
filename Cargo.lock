@@ -773,8 +773,9 @@ checksum = "852e951cb7832cb45cb1169900d19760cfa39b82bc0ea9c0e5a14ae88411c98b"
 
 [[package]]
 name = "wasdk"
-version = "0.7.1"
-source = "git+https://github.com/waos-dev/waos?branch=main#d604f66d9630133fb03315c85ec70c614b015443"
+version = "0.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b90221b5cf84279c735bb50677f3ec205de01d7468286ba4b6800fd95ecc9831"
 dependencies = [
  "inventory",
  "raw-window-handle",
@@ -784,8 +785,9 @@ dependencies = [
 
 [[package]]
 name = "wasdk-macros"
-version = "0.7.1"
-source = "git+https://github.com/waos-dev/waos?branch=main#d604f66d9630133fb03315c85ec70c614b015443"
+version = "0.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ab97d3b1d17c1701145692dfc61681a51ebd1c2b1a1ff9169b723772cee32fb7"
 dependencies = [
  "proc-macro2",
  "quote",
